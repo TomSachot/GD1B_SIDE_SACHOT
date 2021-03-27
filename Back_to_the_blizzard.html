@@ -16,7 +16,7 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 1280,
+        width: 1280*2,
         height: 720,
         physics: {
             default: 'arcade',
@@ -43,6 +43,7 @@
 
     var unlockDoubleJump = false;
     var doubleJump = true;
+    var recupplume = false;
 
     var glace = false;
     var neige = false;
@@ -71,10 +72,10 @@
     }
 
     var platforms;
-    var platformglace;
-    var platformneige;
-    var platformpierre;
-    var platformrocher;
+    //var platformglace;
+    //var platformneige;
+    //var platformpierre;
+    //var platformrocher;
 
     
 
@@ -84,21 +85,26 @@
         this.add.image(960*2, 370, 'moutain');
 
         platforms = this.physics.add.staticGroup();
-        platformsglace = this.physics.add.staticGroup();
-        platformsneige = this.physics.add.staticGroup();
-        platformspierre = this.physics.add.staticGroup();
-        platformsrocher = this.physics.add.staticGroup();
+        //platformsglace = this.physics.add.staticGroup();
+        //platformsneige = this.physics.add.staticGroup();
+        //platformspierre = this.physics.add.staticGroup();
+        //platformsrocher = this.physics.add.staticGroup();
 
         platforms.create(640, 640, 'ground').setScale(2).refreshBody();
+        platforms.create(1280, 640, 'ground').setScale(2).refreshBody();
 
-        platformsneige.create(500, 510, 'platformneige');
-        platformspierre.create(10, 400, 'platformpierre');
-        platformsrocher.create(100, 270, 'platformrocher');
-        platformsglace.create(400, 200, 'platformglace');
-        platformsrocher.create(800, 260, 'platformrocher');
-        platformsrocher.create(900, 200, 'platformrocher')
-        platformsrocher.create(1000, 470, 'platformrocher');
-        platformsglace.create(1280, 360, 'platformglace');
+        platforms.create(500, 510, 'platformneige');
+        platforms.create(10, 400, 'platformpierre');
+        platforms.create(100, 270, 'platformrocher');
+        platforms.create(400, 200, 'platformglace');
+        platforms.create(800, 260, 'platformrocher');
+        platforms.create(900, 200, 'platformrocher')
+        platforms.create(1000, 470, 'platformrocher');
+        platforms.create(1280, 360, 'platformglace');
+
+        platforms.create(1600, 510, 'platformneige');
+        platforms.create(1820, 330, 'platformrocher');
+        platforms.create(2170, 200, 'platformglace');
 
         player = this.physics.add.sprite(100, 450, 'blyke');
 
@@ -161,15 +167,16 @@
 
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.physics.add.collider(player, platforms, platformsglace, platformsneige, platformspierre, platformsrocher);
-        this.physics.add.collider(itchi, platforms, platformsglace, platformsneige, platformspierre, platformsrocher);
-        this.physics.add.collider(plume, platforms, platformsglace, platformsneige, platformspierre, platformsrocher);
+        this.physics.add.collider(player, platforms);
+        this.physics.add.collider(itchi, platforms);
+        this.physics.add.collider(plume, platforms);
 
         this.physics.add.collider(player, itchi, hitItchi, null, this);
         this.physics.add.overlap(player, plume, collectplume, null, this);
 
         cam = this.cameras.main.startFollow(player);
         cam.setZoom(1.0);
+        this.cameras.main.setBounds(0, 0, cam.witdhinPixels, 720);
 
     }
 
@@ -208,22 +215,25 @@
         {
             player.setVelocityY(-330);
         }
-        if (cursors.space.isDown && !player.body.touching.down && unlockDoubleJump && doubleJump)
-        {
-        player.setVelocityY(-330);
-        doubleJump = false;
-        }
-        if (!cursors.space.isDown)
-        {
-        unlockDoubleJump = true;
-        }
+        if (recupplume == true){
+            if (cursors.space.isDown && !player.body.touching.down && unlockDoubleJump && doubleJump)
+            {
+            player.setVelocityY(-330);
+            doubleJump = false;
+            }
+            if (!cursors.space.isDown)
+            {
+            unlockDoubleJump = true;
+            }
     
-        if (player.body.touching.down)
-        {
-        doubleJump = true;
-        unlockDoubleJump = false;
-        player.angle = 0;
+            if (player.body.touching.down)
+            {
+            doubleJump = true;
+            unlockDoubleJump = false;
+            player.angle = 0;
+            }
         }
+        
 
         
         
@@ -291,6 +301,7 @@
     function collectplume (player, plume)
 {
     plume.disableBody(true, true);
+    recupplume = true;
     if (cursors.space.isDown && !player.body.touching.down && unlockDoubleJump && doubleJump)
         {
         player.setVelocityY(-330);
