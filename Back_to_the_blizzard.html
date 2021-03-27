@@ -16,7 +16,7 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 1280*2,
+        width: 1280*3,
         height: 720,
         physics: {
             default: 'arcade',
@@ -83,6 +83,8 @@
     {
         this.add.image(640, 370, 'moutain');
         this.add.image(960*2, 370, 'moutain');
+        this.add.image(980*3, 370, 'moutain');
+
 
         platforms = this.physics.add.staticGroup();
         //platformsglace = this.physics.add.staticGroup();
@@ -92,6 +94,7 @@
 
         platforms.create(640, 640, 'ground').setScale(2).refreshBody();
         platforms.create(1280, 640, 'ground').setScale(2).refreshBody();
+        platforms.create(1920, 640, 'ground').setScale(2).refreshBody();
 
         platforms.create(500, 510, 'platformneige');
         platforms.create(10, 400, 'platformpierre');
@@ -105,6 +108,9 @@
         platforms.create(1600, 510, 'platformneige');
         platforms.create(1820, 330, 'platformrocher');
         platforms.create(2170, 200, 'platformglace');
+        platforms.create(2000, 370, 'platformrocher');
+        platforms.create(2200, 500, 'platformrocher');
+        platforms.create(2490, 510, 'platformneige');
 
         player = this.physics.add.sprite(100, 450, 'blyke');
 
