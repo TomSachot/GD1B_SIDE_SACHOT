@@ -1,0 +1,301 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8" />
+    <title>Sidescroller 2D/Prog</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 1280,
+        height: 720,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 300 },
+                debug: false
+            }
+        },
+        input : {gamepad:true},
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var player;
+    var platforms;
+    var itchi;
+    var plume;
+    var cursors;
+    var gameOver = false;
+    var gameOverText;
+
+    var unlockDoubleJump = false;
+    var doubleJump = true;
+
+    var paddle;
+    var padConnected;
+
+    var game = new Phaser.Game(config);
+
+    function preload ()
+    {
+        this.load.image('moutain', 'Assets/moutain2.png');
+        this.load.image('ground','Assets/sol.png');
+        this.load.image('platformpierre', 'Assets/pierre.png');
+        this.load.image('platformglace', 'Assets/glace.png');
+        this.load.image('platformneige', 'Assets/neige.png');
+        this.load.image('platformrocher', 'Assets/rocher.png');
+        this.load.image('itchi', 'Assets/itchi.png');
+        this.load.image('plume', 'Assets/plume.png');
+        this.load.spritesheet('blyke', 'Assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+    }
+
+    var platforms;
+
+    
+
+    function create ()
+    {
+        this.add.image(640, 370, 'moutain');
+
+        platforms = this.physics.add.staticGroup();
+
+        platforms.create(640, 640, 'ground').setScale(2).refreshBody();
+
+        platforms.create(500, 510, 'platformneige');
+        platforms.create(10, 400, 'platformpierre');
+        platforms.create(100, 270, 'platformrocher');
+        platforms.create(400, 200, 'platformglace');
+        platforms.create(800, 260, 'platformrocher');
+        platforms.create(900, 200, 'platformrocher')
+        platforms.create(1000, 470, 'platformrocher');
+        platforms.create(1280, 360, 'platformglace');
+
+        player = this.physics.add.sprite(100, 450, 'blyke');
+
+        player.setBounce(0.2);
+        player.setCollideWorldBounds(true);
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'blyke', frame: 4 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('blyke', { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('blyke', { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+        key: 'Q',
+        frames: this.anims.generateFrameNumbers('blyke', { start: 0, end: 3 }),
+        frameRate: 10,
+        repeat: -1
+        });
+
+        this.anims.create({
+        key: 'Z',
+        frames: [ { key: 'blyke', frame: 4 } ],
+        frameRate: 20
+        });
+
+        this.anims.create({
+        key: 'D',
+        frames: this.anims.generateFrameNumbers('blyke', { start: 5, end: 8 }),
+        frameRate: 10,
+        repeat: -1
+        });
+
+        this.input.keyboard.addKeys('Z,S,Q,D');
+
+        itchi = this.physics.add.group({
+        key: 'itchi',
+        repeat: 4,
+        setXY: { x: 290, y: 0, stepX: 230 }
+        });
+
+        plume = this.physics.add.group({
+        key: 'plume',
+        setXY: { x: 640, y: 360 }
+        });
+    
+
+        cursors = this.input.keyboard.createCursorKeys();
+
+        this.physics.add.collider(player, platforms);
+        this.physics.add.collider(itchi, platforms);
+        this.physics.add.collider(plume, platforms);
+
+        this.physics.add.collider(player, itchi, hitItchi, null, this);
+        this.physics.add.overlap(player, plume, collectplume, null, this);
+
+    }
+
+    function update ()
+    {
+        if (gameOver){
+        gameOverText = this.add.text(400, 300, 'GAME OVER !', { fontSize: '60px', fill: '#f00'} );
+        return;
+    }
+
+        this.input.gamepad.once('connected', function (pad) {
+            paddle = pad;
+            padConnected = true
+        });
+
+        if (cursors.left.isDown)
+        {
+            player.setVelocityX(-160);
+
+            player.anims.play('left', true);
+        }
+        else if (cursors.right.isDown)
+        {
+            player.setVelocityX(160);
+
+            player.anims.play('right', true);
+        }
+        else
+        {
+            player.setVelocityX(0);
+
+            player.anims.play('turn');
+        }
+
+        if (cursors.space.isDown && player.body.touching.down)
+        {
+            player.setVelocityY(-330);
+        }
+        if (cursors.space.isDown && !player.body.touching.down && unlockDoubleJump && doubleJump)
+        {
+        player.setVelocityY(-330);
+        doubleJump = false;
+        }
+        if (!cursors.space.isDown)
+        {
+        unlockDoubleJump = true;
+        }
+    
+        if (player.body.touching.down)
+        {
+        doubleJump = true;
+        unlockDoubleJump = false;
+        player.angle = 0;
+        }
+
+        
+        
+        
+        
+        if (padConnected){
+        if (paddle.left){
+            player.setVelocityX(-160);
+
+            player.anims.play('Q', true);
+        }
+        else if (paddle.right){
+            player.setVelocityX(160);
+
+            player.anims.play('D', true);
+        }
+        else{
+            player.setVelocityX(0);
+
+            player.anims.play('Z');
+        }
+        
+        if (paddle.down && player.body.touching.down){
+            player.setVelocityY(330);
+        }
+
+        if (paddle.A && player.body.touching.down){
+            player.setVelocityY(-330);
+        }
+    
+        if (paddle.A && !player.body.touching.down && unlockDoubleJump2 && doubleJump2)
+        {
+            player.setVelocityY(-330);
+            doubleJump2 = false;
+        }
+    
+        if (!paddle.A)
+        {
+            unlockDoubleJump = true;
+        }
+
+        if (player.body.touching.down)
+        {
+            doubleJump = true;
+            unlockDoubleJump = false;
+            player.angle = 0;
+        }
+    }
+    
+        
+    
+    }
+
+    function hitItchi (player, bomb)
+{
+    this.physics.pause();
+
+    player.setTint(0x202020);
+
+    player.anims.play('turn');
+    
+    gameOver = true;
+}
+
+    function collectplume (player, plume)
+{
+    plume.disableBody(true, true);
+    if (cursors.space.isDown && !player.body.touching.down && unlockDoubleJump && doubleJump)
+        {
+        player.setVelocityY(-330);
+        doubleJump = false;
+        }
+        if (!cursors.space.isDown)
+        {
+        unlockDoubleJump = true;
+        }
+    
+        if (player.body.touching.down)
+        {
+        doubleJump = true;
+        unlockDoubleJump = false;
+        player.angle = 0;
+        }
+}
+
+
+    function Camera (x, y, width, height)
+{
+    BaseCamera.call(this, 0, 0, 1280, 720);
+}
+
+</script>
+
+</body>
+</html>
