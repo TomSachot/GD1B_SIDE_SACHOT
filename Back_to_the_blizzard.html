@@ -151,6 +151,9 @@
         this.physics.add.collider(player, itchi, hitItchi, null, this);
         this.physics.add.overlap(player, plume, collectplume, null, this);
 
+        cam = this.cameras.main.startFollow(player);
+        cam.setZoom(1.2);
+
     }
 
     function update ()
