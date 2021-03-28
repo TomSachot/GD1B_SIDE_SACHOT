@@ -36,7 +36,9 @@
     var player;
     var platforms;
     var itchi;
+    var monstre;
     var plume;
+    var bombe;
     var cursors;
     var gameOver = false;
     var gameOverText;
@@ -44,6 +46,8 @@
     var unlockDoubleJump = false;
     var doubleJump = true;
     var recupplume = false;
+
+    var speedmonstre = 180;
 
     var paddle;
     var padConnected;
@@ -60,12 +64,14 @@
         this.load.image('platformneige', 'Assets/neige.png');
         this.load.image('platformrocher', 'Assets/rocher.png');
         this.load.image('itchi', 'Assets/itchi.png');
+        this.load.image('monstre', 'Assets/suno.png');
         this.load.image('plume', 'Assets/plume.png');
+        this.load.image('bombe', 'Assets/bombe.png');
         this.load.spritesheet('blyke', 'Assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
 
     var platforms;
-   
+    var ground;
 
     
 
@@ -88,20 +94,20 @@
         platforms.create(1280, 640, 'ground').setScale(2).refreshBody();
         platforms.create(1920, 640, 'ground').setScale(2).refreshBody();
 
-        platforms.create(500, 510, 'platformneige');
+        platforms.create(500, 445, 'platformneige');
         platforms.create(10, 400, 'platformpierre');
         platforms.create(100, 270, 'platformrocher');
         platforms.create(400, 200, 'platformglace');
         platforms.create(800, 260, 'platformrocher');
         platforms.create(900, 200, 'platformrocher')
-        platforms.create(1000, 470, 'platformrocher');
+        platforms.create(1000, 430, 'platformrocher');
         platforms.create(1280, 360, 'platformglace');
 
-        platforms.create(1600, 510, 'platformneige');
+        platforms.create(1600, 445, 'platformneige');
         platforms.create(1820, 330, 'platformrocher');
         platforms.create(2170, 200, 'platformglace');
         platforms.create(2000, 370, 'platformrocher');
-        platforms.create(2200, 500, 'platformrocher');
+        platforms.create(2200, 425, 'platformrocher');
         platforms.create(2490, 510, 'platformneige');
 
         player = this.physics.add.sprite(100, 450, 'blyke');
@@ -157,9 +163,19 @@
         setXY: { x: 290, y: 0, stepX: 230 }
         });
 
+        monstre = this.physics.add.group({
+        key: 'monstre',
+        setXY: {x: 128, y: 400}
+        });
+
         plume = this.physics.add.group({
         key: 'plume',
         setXY: { x: 640, y: 360 }
+        });
+
+        bombe = this.physics.add.group({
+        key: 'bombe',
+        setXY: {x: 2560, y: 530}
         });
     
 
@@ -167,10 +183,13 @@
 
         this.physics.add.collider(player, platforms);
         this.physics.add.collider(itchi, platforms);
+        this.physics.add.collider(monstre, platforms);
         this.physics.add.collider(plume, platforms);
+        this.physics.add.collider(bombe, platforms);
 
         this.physics.add.collider(player, itchi, hitItchi, null, this);
         this.physics.add.overlap(player, plume, collectplume, null, this);
+        this.physics.add.overlap(player, bombe, collectbombe, null, this);
 
         cam = this.cameras.main.startFollow(player);
         cam.setZoom(1.0);
@@ -287,9 +306,13 @@
 
 
     }
-    
+
+// Suno (Monstre)
         
-    
+    function Monstre(monstre){
+        
+        monstre.setVelocityX(180);
+    }
     
 
 // Itchi (Ennemis)
@@ -328,6 +351,13 @@
         player.angle = 0;
         }
 }
+
+// Bombe (objectif final)
+
+    function collectbombe(player, bombe){
+        bombe.disableBody(true, true);
+        monstre.destroy();
+    }
 
 
 </script>
