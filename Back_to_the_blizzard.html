@@ -16,7 +16,7 @@
 
     var config = {
         type: Phaser.AUTO,
-        width: 1280*3,
+        width: 1280*2,
         height: 720,
         physics: {
             default: 'arcade',
@@ -45,14 +45,6 @@
     var doubleJump = true;
     var recupplume = false;
 
-    var glace = false;
-    var neige = false;
-    var roche = true; 
-    
-    var vitesseplayer = 160;
-    var vitesseneige = 90;
-    var vitesseglace = 240;
-
     var paddle;
     var padConnected;
 
@@ -60,7 +52,7 @@
 
     function preload ()
     {
-        this.load.image('moutain', 'Assets/moutain2.png');
+        this.load.image('moutain', 'Assets/moutain.png');
         this.load.image('ground','Assets/sol.png');
         this.load.image('platformpierre', 'Assets/pierre.png');
         this.load.image('platformglace', 'Assets/glace.png');
@@ -72,10 +64,7 @@
     }
 
     var platforms;
-    //var platformglace;
-    //var platformneige;
-    //var platformpierre;
-    //var platformrocher;
+   
 
     
 
@@ -83,14 +72,13 @@
     {
         this.add.image(640, 370, 'moutain');
         this.add.image(960*2, 370, 'moutain');
-        this.add.image(980*3, 370, 'moutain');
+        //this.add.image(980*3, 370, 'moutain');
 
 
         platforms = this.physics.add.staticGroup();
-        //platformsglace = this.physics.add.staticGroup();
-        //platformsneige = this.physics.add.staticGroup();
-        //platformspierre = this.physics.add.staticGroup();
-        //platformsrocher = this.physics.add.staticGroup();
+        //glace = this.physics.add.staticGroup();
+        //neige = this.physics.add.staticGroup();
+        
 
         platforms.create(640, 640, 'ground').setScale(2).refreshBody();
         platforms.create(1280, 640, 'ground').setScale(2).refreshBody();
@@ -182,7 +170,7 @@
 
         cam = this.cameras.main.startFollow(player);
         cam.setZoom(1.0);
-        this.cameras.main.setBounds(0, 0, cam.witdhinPixels, 720);
+        this.cameras.main.setBounds(0, 0, cam.widthInPixels, 720);
 
     }
 
