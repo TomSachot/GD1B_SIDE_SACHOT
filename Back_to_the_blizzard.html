@@ -2,7 +2,7 @@
 <html lang="en"> 
 <head> 
     <meta charset="UTF-8" />
-    <title>Sidescroller 2D/Prog</title>
+    <title>Sidescroller 2D/Prog --- Back to the Blizzard</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
@@ -202,11 +202,11 @@
     function update ()
     {
         if (gameOver){
-        gameOverText = this.add.text(400, 300, 'GAME OVER !', { fontSize: '60px', fill: '#f00'} );
+        gameOverText = this.add.text(1280, 300, 'GAME OVER !', { fontSize: '60px', fill: '#f00'} );
         return;
         }
         if(win){
-        winText = this.add.text(1600, 300, 'YOU WIN ! CONGRATULATIONS !', {fontSize: '60px', fill: '#0f0'});
+        winText = this.add.text(1500, 300, 'YOU WIN ! CONGRATULATIONS !', {fontSize: '60px', fill: '#0f0'});
         return;
         }
 
@@ -368,6 +368,8 @@
         player.setTint(0x008000);
 
         player.anims.play('turn');
+
+        win = true;
 
         monstre.destroy();
     }
