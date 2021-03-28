@@ -52,6 +52,7 @@
 
     function preload ()
     {
+        this.load.image('menu', 'Assets/menu.png');
         this.load.image('moutain', 'Assets/moutain.png');
         this.load.image('ground','Assets/sol.png');
         this.load.image('platformpierre', 'Assets/pierre.png');
@@ -70,9 +71,12 @@
 
     function create ()
     {
+        menu = this.add.image(640,370, 'menu').setDepth(3).setScrollFactor(0);
+
         this.add.image(640, 370, 'moutain');
         this.add.image(960*2, 370, 'moutain');
         //this.add.image(980*3, 370, 'moutain');
+
 
 
         platforms = this.physics.add.staticGroup();
@@ -179,7 +183,11 @@
         if (gameOver){
         gameOverText = this.add.text(400, 300, 'GAME OVER !', { fontSize: '60px', fill: '#f00'} );
         return;
-    }
+        }
+
+        this.input.on('pointerdown', function (pointer) {
+        menu.destroy();
+        })
 
         this.input.gamepad.once('connected', function (pad) {
             paddle = pad;
@@ -276,10 +284,15 @@
             player.angle = 0;
         }
     }
+
+
+    }
     
         
     
-    }
+    
+
+// Itchi (Ennemis)
 
     function hitItchi (player, bomb)
 {
@@ -291,6 +304,8 @@
     
     gameOver = true;
 }
+
+// Power-Up (Double saut)
 
     function collectplume (player, plume)
 {
